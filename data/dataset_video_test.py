@@ -8,6 +8,8 @@ import glob
 import torch
 from os import path as osp
 import torch.utils.data as data
+import numpy as np
+import matplotlib.pyplot as plt
 
 import utils.utils_video as utils_video
 
@@ -48,6 +50,7 @@ class VideoRecurrentTestDataset(data.Dataset):
     """
 
     def __init__(self, opt):
+        self.a = False
         super(VideoRecurrentTestDataset, self).__init__()
         self.opt = opt
         self.cache_data = opt['cache_data']
@@ -114,8 +117,11 @@ class VideoRecurrentTestDataset(data.Dataset):
             torch.manual_seed(0)
             noise_level = torch.ones((1, 1, 1, 1)) * self.sigma
             noise = torch.normal(mean=0, std=noise_level.expand_as(imgs_lq))
-            imgs_lq = imgs_lq + noise
-            t, _, h, w = imgs_lq.shape
+            imgs_lq = imgs_gt + noise
+            if not self.a:
+                plt.imshow(np.transpose(image_data, (1, 2, 0)))
+                plt.show()
+            t, _, h, w = imgs_gt.shape
             imgs_lq = torch.cat([imgs_lq, noise_level.expand(t, 1, h, w)], 1)
         else:
         # for video sr and deblurring
