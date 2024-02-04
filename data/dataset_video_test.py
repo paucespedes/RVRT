@@ -116,7 +116,7 @@ class VideoRecurrentTestDataset(data.Dataset):
             torch.manual_seed(0)
             noise_level = torch.ones((1, 1, 1, 1)) * self.sigma
             noise = torch.normal(mean=0, std=noise_level.expand_as(imgs_lq))
-            #imgs_lq = imgs_gt + noisee
+            #imgs_lq = imgs_gt + noise
             t, _, h, w = imgs_lq.shape
             imgs_lq = torch.cat([imgs_lq, noise_level.expand(t, 1, h, w)], 1)
         else:
