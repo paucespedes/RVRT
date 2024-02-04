@@ -119,8 +119,9 @@ class VideoRecurrentTestDataset(data.Dataset):
             noise = torch.normal(mean=0, std=noise_level.expand_as(imgs_lq))
             imgs_lq = imgs_gt + noise
             if not self.a:
-                plt.imshow(np.transpose(image_data, (1, 2, 0)))
+                plt.imshow(np.transpose(imgs_lq[0], (1, 2, 0)))
                 plt.show()
+                self.a = True
             t, _, h, w = imgs_gt.shape
             imgs_lq = torch.cat([imgs_lq, noise_level.expand(t, 1, h, w)], 1)
         else:
