@@ -103,15 +103,18 @@ class VideoRecurrentTestDataset(data.Dataset):
 
         if self.sigma:
         # for non-blind video denoising
+        # PAU PATCH: KEEP ORIGINAL LQ IMAGES AS THEY ALREADY COME NOISY, ONLY ADD NOISE MAPTO THEM
             if self.cache_data:
                 imgs_gt = self.imgs_gt[folder]
+                imgs_lq = self.imgs_lq[folder]
             else:
                 imgs_gt = utils_video.read_img_seq(self.imgs_gt[folder])
+                imgs_lq = utils_video.read_img_seq(self.imgs_lq[folder])
 
             torch.manual_seed(0)
             noise_level = torch.ones((1, 1, 1, 1)) * self.sigma
             noise = torch.normal(mean=0, std=noise_level.expand_as(imgs_gt))
-            imgs_lq = imgs_gt + noise
+            #imgs_lq = imgs_gt + noise
             t, _, h, w = imgs_lq.shape
             imgs_lq = torch.cat([imgs_lq, noise_level.expand(t, 1, h, w)], 1)
         else:
