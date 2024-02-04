@@ -233,7 +233,7 @@ def test_video(lq, model, args):
             # test as multiple clips if out-of-memory
             sf = args.scale
             num_frame_overlapping = args.tile_overlap[0]
-            not_overlap_border = True
+            not_overlap_border = False
             b, d, c, h, w = lq.size()
             c = c - 1 if args.nonblind_denoising else c
             stride = num_frame_testing - num_frame_overlapping
