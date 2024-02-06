@@ -122,9 +122,8 @@ class VideoRecurrentTestDataset(data.Dataset):
 
             torch.manual_seed(0)
             noise_level = torch.ones((1, 1, 1, 1)) * self.sigma
-            noise = torch.normal(mean=0, std=noise_level.expand_as(imgs_lq))
-            imgs_lq = imgs_gt + noise
-            t, _, h, w = imgs_gt.shape
+            #imgs_lq = imgs_lq + noise
+            t, _, h, w = imgs_lq.shape
 
             # for x in range(t):
                 # Lack of squeeze later on with some data??
