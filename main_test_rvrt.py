@@ -69,7 +69,7 @@ def main():
     for idx, batch in enumerate(test_loader):
         lq = batch['L'].to(device)
         folder = batch['folder']
-        gt = batch['H'] if 'H' in batch else None
+        gt = batch['H'].to(device) if 'H' in batch else None
 
         # inference
         with torch.no_grad():
