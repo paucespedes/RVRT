@@ -123,7 +123,8 @@ class VideoRecurrentTestDataset(data.Dataset):
             torch.manual_seed(0)
             noise_level = torch.ones((1, 1, 1, 1)) * self.sigma
             #imgs_lq = imgs_lq + noise
-            print('Images LQ: ' + imgs_lq)
+            print('Images LQ:')
+            print(imgs_lq)
             t, _, h, w = imgs_lq.shape
 
             # for x in range(t):
@@ -135,7 +136,8 @@ class VideoRecurrentTestDataset(data.Dataset):
                 # img = (img * 255.0).round().astype(np.uint8)  # float32 to uint8
                 # cv2.imwrite(f'results/noisy-imgs/{index}/{x}.png', img)
             imgs_lq = torch.cat([imgs_lq, noise_level.expand(t, 1, h, w)], 1)
-            print('Images LQ after noisemap: ' + imgs_lq)
+            print('Images LQ after noisemap:')
+            print(imgs_lq)
         else:
         # for video sr and deblurring
             if self.cache_data:
