@@ -124,16 +124,16 @@ class VideoRecurrentTestDataset(data.Dataset):
             noise_level = torch.ones((1, 1, 1, 1)) * self.sigma
             noise = torch.normal(mean=0, std=noise_level.expand_as(imgs_lq))
             imgs_lq = imgs_gt + noise
-            t, _, h, w = imgs_lq.shape
+            t, _, h, w = imgs_gt.shape
 
-            for x in range(t):
+            # for x in range(t):
                 # Lack of squeeze later on with some data??
                 #cpu().detach().numpy()
-                img = imgs_lq[x].clone().detach()
-                img = img.data.squeeze().float().cpu().clamp_(0, 1).numpy()
-                img = np.transpose(img[[2, 1, 0], :, :], (1, 2, 0))  # CHW-RGB to HCW-BGR
-                img = (img * 255.0).round().astype(np.uint8)  # float32 to uint8
-                cv2.imwrite(f'results/noisy-imgs/{index}/{x}.png', img)
+                # img = imgs_lq[x].clone().detach()
+                # img = img.data.squeeze().float().cpu().clamp_(0, 1).numpy()
+                # img = np.transpose(img[[2, 1, 0], :, :], (1, 2, 0))  # CHW-RGB to HCW-BGR
+                # img = (img * 255.0).round().astype(np.uint8)  # float32 to uint8
+                # cv2.imwrite(f'results/noisy-imgs/{index}/{x}.png', img)
             imgs_lq = torch.cat([imgs_lq, noise_level.expand(t, 1, h, w)], 1)
         else:
         # for video sr and deblurring
