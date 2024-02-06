@@ -6,10 +6,11 @@
 
 import glob
 import torch
+import cv2
+import os
 from os import path as osp
 import torch.utils.data as data
 import numpy as np
-import matplotlib.pyplot as plt
 
 import utils.utils_video as utils_video
 
@@ -50,6 +51,9 @@ class VideoRecurrentTestDataset(data.Dataset):
     """
 
     def __init__(self, opt):
+        save_dir = f'results/noisy-imgs'
+        os.makedirs(save_dir, exist_ok=True)
+
         super(VideoRecurrentTestDataset, self).__init__()
         self.opt = opt
         self.cache_data = opt['cache_data']
@@ -106,6 +110,9 @@ class VideoRecurrentTestDataset(data.Dataset):
         if self.sigma:
         # for non-blind video denoising
         # PAU PATCH: KEEP ORIGINAL LQ IMAGES AS THEY ALREADY COME NOISY, ONLY ADD NOISE MAPTO THEM
+            save_dir = f'results/noisy-imgs/{index}'
+            os.makedirs(save_dir, exist_ok=True)
+
             if self.cache_data:
                 imgs_gt = self.imgs_gt[folder]
                 imgs_lq = self.imgs_lq[folder]
@@ -116,8 +123,14 @@ class VideoRecurrentTestDataset(data.Dataset):
             torch.manual_seed(0)
             noise_level = torch.ones((1, 1, 1, 1)) * self.sigma
             noise = torch.normal(mean=0, std=noise_level.expand_as(imgs_lq))
-            #imgs_lq = imgs_gt + noise
+            imgs_lq = imgs_gt + noise
             t, _, h, w = imgs_lq.shape
+
+            for x in range(t):
+                img = imgs_lq[x]
+                img = np.transpose(img[[2, 1, 0], :, :], (1, 2, 0))  # CHW-RGB to HCW-BGR
+                img = (img * 255.0).round().astype(np.uint8)  # float32 to uint8
+                cv2.imwrite(f'results/noisy-imgs/{index}/{x}.png', img)
             imgs_lq = torch.cat([imgs_lq, noise_level.expand(t, 1, h, w)], 1)
         else:
         # for video sr and deblurring

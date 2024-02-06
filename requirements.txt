@@ -12,4 +12,3 @@ torchvision
 timm
 einops
 ninja
-matplotlib
