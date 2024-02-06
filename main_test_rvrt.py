@@ -80,6 +80,7 @@ def main():
 
         test_results_folder = OrderedDict()
         test_results_folder['psnr'] = []
+        test_results_folder['psnr-lq-gt'] = []
         test_results_folder['ssim'] = []
         test_results_folder['psnr_y'] = []
         test_results_folder['ssim_y'] = []
@@ -103,7 +104,14 @@ def main():
                 img_gt = (img_gt * 255.0).round().astype(np.uint8)  # float32 to uint8
                 img_gt = np.squeeze(img_gt)
 
+                img_lq = lq[:, i, ...].data.squeeze().float().cpu().clamp_(0, 1).numpy()
+                if img_lq.ndim == 3:
+                    img_lq = np.transpose(img_lq[[2, 1, 0], :, :], (1, 2, 0))  # CHW-RGB to HCW-BGR
+                img_lq = (img_lq * 255.0).round().astype(np.uint8)  # float32 to uint8
+                img_lq = np.squeeze(img_lq)
+
                 test_results_folder['psnr'].append(util.calculate_psnr(img, img_gt, border=0))
+                test_results_folder['psnr-lq-gt'].append(util.calculate_psnr(img_lq, img_gt, border=0))
                 test_results_folder['ssim'].append(util.calculate_ssim(img, img_gt, border=0))
                 if img_gt.ndim == 3:  # RGB image
                     img = util.bgr2ycbcr(img.astype(np.float32) / 255.) * 255.
@@ -116,10 +124,12 @@ def main():
 
         if gt is not None:
             psnr = sum(test_results_folder['psnr']) / len(test_results_folder['psnr'])
+            psnr_lq_gt = sum(test_results_folder['psnr-lq-gt']) / len(test_results_folder['psnr-lq-gt'])
             ssim = sum(test_results_folder['ssim']) / len(test_results_folder['ssim'])
             psnr_y = sum(test_results_folder['psnr_y']) / len(test_results_folder['psnr_y'])
             ssim_y = sum(test_results_folder['ssim_y']) / len(test_results_folder['ssim_y'])
             test_results['psnr'].append(psnr)
+            test_results['psnr-lq-gt'].append(psnr_lq_gt)
             test_results['ssim'].append(ssim)
             test_results['psnr_y'].append(psnr_y)
             test_results['ssim_y'].append(ssim_y)
@@ -131,11 +141,12 @@ def main():
     # summarize psnr/ssim
     if gt is not None:
         ave_psnr = sum(test_results['psnr']) / len(test_results['psnr'])
+        ave_psnr_lq_gt = sum(test_results['psnr-lq-gt']) / len(test_results['psnr-lq-gt'])
         ave_ssim = sum(test_results['ssim']) / len(test_results['ssim'])
         ave_psnr_y = sum(test_results['psnr_y']) / len(test_results['psnr_y'])
         ave_ssim_y = sum(test_results['ssim_y']) / len(test_results['ssim_y'])
-        print('\n{} \n-- Average PSNR: {:.2f} dB; SSIM: {:.4f}; PSNR_Y: {:.2f} dB; SSIM_Y: {:.4f}'.
-              format(save_dir, ave_psnr, ave_ssim, ave_psnr_y, ave_ssim_y))
+        print('\n{} \n-- Average PSNR: {:.2f} dB; Average PSNR lq gt: {:.2f} dB; SSIM: {:.4f}; PSNR_Y: {:.2f} dB; SSIM_Y: {:.4f}'.
+              format(save_dir, ave_psnr, ave_psnr_lq_gt,  ave_ssim, ave_psnr_y, ave_ssim_y))
 
 
 def prepare_model_dataset(args):
