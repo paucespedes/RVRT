@@ -127,7 +127,7 @@ class VideoRecurrentTestDataset(data.Dataset):
             t, _, h, w = imgs_lq.shape
 
             for x in range(t):
-                img = imgs_lq[x]
+                img = imgs_lq[x].cpu().detach().numpy()
                 img = np.transpose(img[[2, 1, 0], :, :], (1, 2, 0))  # CHW-RGB to HCW-BGR
                 img = (img * 255.0).round().astype(np.uint8)  # float32 to uint8
                 cv2.imwrite(f'results/noisy-imgs/{index}/{x}.png', img)
