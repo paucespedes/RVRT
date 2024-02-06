@@ -59,6 +59,7 @@ def main():
         os.makedirs(save_dir, exist_ok=True)
     test_results = OrderedDict()
     test_results['psnr'] = []
+    test_results['psnr-lq-gt'] = []
     test_results['ssim'] = []
     test_results['psnr_y'] = []
     test_results['ssim_y'] = []
