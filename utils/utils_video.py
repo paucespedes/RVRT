@@ -3,7 +3,7 @@
 # This source code is licensed under the BSD license found in the
 # LICENSE file in the root directory of this source tree.
 
-
+from PIL import Image
 import os
 import cv2
 import numpy as np
@@ -72,10 +72,12 @@ def read_img_seq(path, require_mod_crop=False, scale=1, return_imgname=False):
         img_paths = path
     else:
         img_paths = sorted(list(scandir(path, full_path=True)))
-    imgs = [cv2.imread(v).astype(np.float32) / 255. for v in img_paths]
+
+    imgs = [read_image(v) for v in img_paths]
 
     if require_mod_crop:
         imgs = [mod_crop(img, scale) for img in imgs]
+
     imgs = img2tensor(imgs, bgr2rgb=True, float32=True)
     imgs = torch.stack(imgs, dim=0)
 
@@ -84,6 +86,12 @@ def read_img_seq(path, require_mod_crop=False, scale=1, return_imgname=False):
         return imgs, imgnames
     else:
         return imgs
+
+
+def read_image(path):
+    """Read an image using PIL."""
+    with Image.open(path) as img:
+        return np.array(img).astype(np.float32) / 255.
 
 
 def img2tensor(imgs, bgr2rgb=True, float32=True):
