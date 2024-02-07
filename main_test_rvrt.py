@@ -89,8 +89,8 @@ def main():
         for i in range(output.shape[1]):
             # save image
             img = output[:, i, ...].data.squeeze().float().cpu().clamp_(0, 1).numpy()
-            if img.ndim == 3:
-                img = np.transpose(img[[2, 1, 0], :, :], (1, 2, 0))  # CHW-RGB to HCW-BGR
+            # if img.ndim == 3:
+                # img = np.transpose(img[[2, 1, 0], :, :], (1, 2, 0))  # CHW-RGB to HCW-BGR
             img = (img * 255.0).round().astype(np.uint8)  # float32 to uint8
             if args.save_result:
                 seq_ = osp.basename(batch['lq_path'][i][0]).split('.')[0]
