@@ -95,7 +95,7 @@ def main():
             if args.save_result:
                 seq_ = osp.basename(batch['lq_path'][i][0]).split('.')[0]
                 os.makedirs(f'{save_dir}/{folder[0]}', exist_ok=True)
-                cv2.imwrite(f'{save_dir}/{folder[0]}/{seq_}.png', img)
+                cv2.imwrite(f'{save_dir}/{folder[0]}/{seq_}.png', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
 
             # evaluate psnr/ssim
             if gt is not None:
