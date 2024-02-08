@@ -132,9 +132,8 @@ class VideoRecurrentTestDataset(data.Dataset):
             for x in range(t):
                 #Lack of squeeze later on with some data??
                 #cpu().detach().numpy()
-                img = imgs_lq[x].clone().detach()
-                img = img.data.squeeze().float().cpu().clamp_(0, 1).numpy()
-                img = img[:, :, [2, 1, 0]]  # CHW-RGB to HCW-BGR
+                img = imgs_lq[x].clone().cpu().detach().numpy()
+                img = np.transpose(img[[2, 1, 0], :, :], (1, 2, 0))  # CHW-RGB to HCW-BGR
                 img = (img * 255.0).round().astype(np.uint8)  # float32 to uint8
                 cv2.imwrite(f'results/noisy-imgs/{index}/{x}.png', img)
             imgs_lq = torch.cat([imgs_lq, noise_level.expand(t, 1, h, w)], 1)
