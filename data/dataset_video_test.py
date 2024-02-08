@@ -135,7 +135,7 @@ class VideoRecurrentTestDataset(data.Dataset):
                 img = imgs_lq[x].clone().cpu().detach().numpy()
                 img = np.transpose(img[[2, 1, 0], :, :], (1, 2, 0))  # CHW-RGB to HCW-BGR
                 img = (img * 255.0).round().astype(np.uint8)  # float32 to uint8
-                cv2.imwrite(f'results/noisy-imgs/{index}/{x}.png', img)
+                cv2.imwrite(f'results/noisy-imgs/{index}/{x}.png', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
             imgs_lq = torch.cat([imgs_lq, noise_level.expand(t, 1, h, w)], 1)
             # print('Images LQ after noisemap:')
             # print(imgs_lq)
